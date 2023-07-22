@@ -82,7 +82,7 @@ class Record:
             return f'{new_phone} already exists in {self.name}`s phones'
         else:
             for idx, ph in enumerate(self.phones):
-                if str(old_phone) == ph:
+                if str(old_phone) == str(ph):
                     self.phones[idx] = str(new_phone)
                     return f"{self.name}`s {old_phone} changed to {new_phone}"
             return f'{old_phone} not in {self.name}`s phones'
@@ -130,13 +130,14 @@ class AddressBook(UserDict):
                 data = json.load(fb)
                 for name, record_data in data.items():
                     name_field = Name(name)
-                    phones = []
-                    for phone in record_data.get('phones'):
-                        phones.append(phone)
-                    # phones = [Phone(phone) for phone in record_data.get('phones')]
+                    phone = Phone(list(record_data.get('phones'))[0])
+                    
                     birthday_value = record_data.get('birthday', None)
                     birthday = Birthday(birthday_value) if birthday_value else None
-                    record = Record(name_field, phones, birthday)
+                    record = Record(name_field, phone, birthday)
+                    for ph in record_data.get('phones')[1:]:
+                        t = Phone(ph)
+                        record.add_phone(t)
                     self.data[name] = record  
         except FileNotFoundError:
             with open(self.filename, 'w') as fb:
