@@ -106,8 +106,8 @@ def main():
         command, data = parser(user_input)
         result = command(*data)
         print(result)
+        ab.save_data()
         if command == exit_command:
             break
-        ab.save_data()
 if __name__ == '__main__':
     main()
